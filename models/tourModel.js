@@ -184,11 +184,12 @@ toursSchema.pre(/^find/, function (next) {
   next();
 });
 
+/*
 toursSchema.post(/^find/, function (docs, next) {
   console.log(`Query took: ${Date.now() - this.start} milliseconds! 🙈`);
 
   next();
-});
+});*/
 
 // AGGREGATION MIDDLEWARE
 toursSchema.pre('aggregate', function (next) {

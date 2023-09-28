@@ -25,8 +25,6 @@ export const hideAlert = () => {
 
 // Type is "Success" or "Error"
 export const showAlert = (type, message) => {
-  console.log('Alert');
-
   hideAlert();
 
   const markup = `<div class="alert alert--${type}">${message}</div>`;
@@ -42,7 +40,7 @@ const login = async function (email, password) {
   try {
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:3000/api/v1/users/login',
+      url: '/api/v1/users/login',
       data: {
         email,
         password,
@@ -73,7 +71,7 @@ const singnup = async function (name, email, password, passwordConfirm) {
 
     const res = await axios({
       method: 'POST',
-      url: 'http://127.0.0.1:3000/api/v1/users/singnup',
+      url: '/api/v1/users/singnup',
       data: {
         name,
         email,
@@ -93,7 +91,6 @@ const singnup = async function (name, email, password, passwordConfirm) {
     }
   } catch (err) {
     showAlert('error', `${err.response.data.message}💥`);
-    console.log(err);
   }
 };
 
@@ -101,7 +98,7 @@ const logout = async () => {
   try {
     const res = await axios({
       method: 'GET',
-      url: 'http://127.0.0.1:3000/api/v1/users/logout',
+      url: '/api/v1/users/logout',
     });
 
     if (res.data.status === 'success') location.reload(true);
@@ -118,8 +115,8 @@ const updateSettings = async function (data, type) {
   try {
     const url =
       type === 'password'
-        ? 'http://127.0.0.1:3000/api/v1/users/updateMyPassword'
-        : 'http://127.0.0.1:3000/api/v1/users/updateMe';
+        ? '/api/v1/users/updateMyPassword'
+        : '/api/v1/users/updateMe';
 
     const res = await axios({
       method: 'patch',
@@ -141,14 +138,12 @@ const updateSettings = async function (data, type) {
 export const bookTour = async function (tourId) {
   try {
     // 1) Get checkout session from API
-    const session = await axios(
-      `http://127.0.0.1:3000/api/v1/bookings/checkout-session/${tourId}`,
-    );
+    const session = await axios(`/api/v1/bookings/checkout-session/${tourId}`);
 
     // 2) Create checkout form + chance credit card
     await stripe.redirectToCheckout({ sessionId: session.data.session.id });
   } catch (err) {
-    console.log(err);
+    showAlert('error', `${err.response.data.message}💥`);
   }
 };
 
