@@ -15,7 +15,7 @@ const signTOKEN = function (id) {
   });
 };
 
-const createSendToken = function (user, statusCode, res) {
+const createSendToken = function (user, statusCode, res, req) {
   // If everything ok, Send TOKEN to client
   const token = signTOKEN(user._id);
 
@@ -25,9 +25,10 @@ const createSendToken = function (user, statusCode, res) {
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
     ),
     httpOnly: true,
+    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
   };
 
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  // if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
 
   res.cookie('jwt', token, cookieOptions);
 
@@ -57,7 +58,7 @@ exports.singnUp = catchAsync(async (req, res, next) => {
   await new Email(newUser, url).sendWelcome();
 
   // Send Response 🛩️
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, res, req);
 });
 
 ///////////////////////////////////
@@ -78,7 +79,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // 3) If everything ok, Send TOKEN to client
   // Send Response 🛩️
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, res, req);
 });
 
 // Logging out users
@@ -259,7 +260,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   // 4) Log the user in, Send JWT
   // If everything ok, Send TOKEN to client
   // Send Response 🛩️
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, res, req);
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
@@ -280,5 +281,5 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   // 4) Log user in, send JWT
   // If everything ok, Send TOKEN to client
   // Send Response 🛩️
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, res, req);
 });
