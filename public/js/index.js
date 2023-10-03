@@ -24,13 +24,13 @@ export const hideAlert = () => {
 };
 
 // Type is "Success" or "Error"
-export const showAlert = (type, message) => {
+export const showAlert = (type, message, time = 7) => {
   hideAlert();
 
   const markup = `<div class="alert alert--${type}">${message}</div>`;
   document.querySelector('body').insertAdjacentHTML('afterbegin', markup);
 
-  window.setTimeout(hideAlert, 5000);
+  window.setTimeout(hideAlert, time * 1000);
 };
 
 ///////////////////////////////////
@@ -212,3 +212,6 @@ if (bookBtn) {
     bookTour(tourId);
   });
 }
+
+const alertMessage = document.querySelector('body').dataset.alert;
+if (alertMessage) showAlert('success', alertMessage, 20);

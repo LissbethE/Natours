@@ -54,8 +54,8 @@ exports.singnUp = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
   });
 
-  const url = `${req.protocol}://${req.get('host')}/me`;
-  await new Email(newUser, url).sendWelcome();
+  //const url = `${req.protocol}://${req.get('host')}/me`;
+  // await new Email(newUser, url).sendWelcome();
 
   // Send Response 🛩️
   createSendToken(newUser, 201, res, req);
