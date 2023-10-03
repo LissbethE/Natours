@@ -19,11 +19,18 @@ const userRouter = require('./routes/userRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 
 //////////////////////////////////
 const app = express();
 
-app.enable('trust proxy');
+// app.enable('trust proxy');
+app.set('trust proxy', (ip) => {
+  const ips = ip === '127.0.0.1' || ip === '123.123.123.123';
+
+  if (ips) return true; // trusted IPs
+  else return false;
+});
 
 // Setting up: Pug in express
 app.set('view engine', 'pug');
@@ -57,6 +64,13 @@ const limiter = rateLimit({
 });
 
 app.use('/api', limiter);
+
+// Stripe Webhooks express.raw
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: '*/*' }),
+  bookingController.webhookCheckout,
+);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
